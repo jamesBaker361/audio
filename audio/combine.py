@@ -9,8 +9,7 @@ output_file = "combined.wav"
 
 # Get all WAV files in sorted order
 wav_files = sorted([os.path.join(wav_dir, f) for f in os.listdir(wav_dir) if f.endswith(".wav")],key=lambda x: int(x.split("_")[0].split("/")[1]))
-print(wav_files)
-exit()
+
 
 if not wav_files:
     raise ValueError("No WAV files found in directory.")
