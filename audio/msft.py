@@ -1,6 +1,7 @@
 from transformers import pipeline
 from datasets import load_dataset
 import soundfile as sf
+import torch
 
 synthesiser = pipeline("text-to-speech", "microsoft/speecht5_tts")
 
