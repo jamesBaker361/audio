@@ -1,9 +1,16 @@
-from gtts import gTTS
-import pyttsx3
 
-engine = pyttsx3.init()
-engine.setProperty('rate', 150)  # speed
-engine.setProperty('volume', 1.0)
+from transformers import pipeline
+from datasets import load_dataset
+import soundfile as sf
+import torch
+import os
+
+synthesiser = pipeline("text-to-speech", "microsoft/speecht5_tts")
+
+embeddings_dataset = load_dataset("Matthijs/cmu-arctic-xvectors", split="validation")
+speaker_embedding = torch.tensor(embeddings_dataset[7306]["xvector"]).unsqueeze(0)
+
+
 
 text_arr=[]
 with open("sailor.txt", "r", encoding="utf-8") as f:
@@ -15,10 +22,12 @@ with open("sailor.txt", "r", encoding="utf-8") as f:
                     text_arr.append(line)
 
 # Join all strings into a single text
-for i,text in enumerate(text_arr):
-    print(text)
 
-    engine.save_to_file(text,f"output_{f}.mp3")
-    engine.runAndWait()
-    if i ==5:
-        break
+os.makedirs("clips")
+for i,text in enumerate(text_arr):
+    speech = synthesiser("Hello, my dog is cooler than you!", forward_params={"speaker_embeddings": speaker_embedding})
+
+    path=os.path.join("clips",f"{i}_speech.wav")
+    sf.write(path, speech["audio"], samplerate=speech["sampling_rate"])
+    if i %100==0:
+        print(f"{i}/{len(text_arr)}")
