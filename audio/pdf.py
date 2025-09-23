@@ -25,9 +25,11 @@ with open("sailor.txt", "r", encoding="utf-8") as f:
 
 os.makedirs("clips")
 for i,text in enumerate(text_arr):
-    speech = synthesiser("Hello, my dog is cooler than you!", forward_params={"speaker_embeddings": speaker_embedding})
+    speech = synthesiser(text, forward_params={"speaker_embeddings": speaker_embedding})
 
     path=os.path.join("clips",f"{i}_speech.wav")
     sf.write(path, speech["audio"], samplerate=speech["sampling_rate"])
     if i %100==0:
         print(f"{i}/{len(text_arr)}")
+
+print("all done !")
